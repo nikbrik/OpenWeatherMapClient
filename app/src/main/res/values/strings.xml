@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">OpenWeatherMapClient</string>
+    <string name="settings_button">Settings</string>
+    <string-array name="langs">
+        <item>English</item>
+        <item>Русский</item>
+    </string-array>
+
 </resources>

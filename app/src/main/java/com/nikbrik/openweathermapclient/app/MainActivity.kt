@@ -1,7 +1,8 @@
-package com.nikbrik.openweathermapclient
+package com.nikbrik.openweathermapclient.app
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.nikbrik.openweathermapclient.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
