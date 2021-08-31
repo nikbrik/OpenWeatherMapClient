@@ -5,9 +5,13 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Relation
 import com.nikbrik.openweathermapclient.data.daily_weather.DailyWeather
+import com.nikbrik.openweathermapclient.data.daily_weather.DailyWeatherContract
+import com.nikbrik.openweathermapclient.data.daily_weather.DailyWeatherEntity
+import com.nikbrik.openweathermapclient.data.daily_weather.DailyWeatherWithLists
 import com.nikbrik.openweathermapclient.data.hourly_weather.HourlyWeather
 import com.nikbrik.openweathermapclient.data.hourly_weather.HourlyWeatherContract
 import com.nikbrik.openweathermapclient.data.hourly_weather.HourlyWeatherEntity
+import com.nikbrik.openweathermapclient.data.hourly_weather.HourlyWeatherWithLists
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -47,31 +51,20 @@ data class OneCallDataEntity(
 )
 
 data class OneCallDataWithLists(
-
     @Embedded
     val entity: OneCallDataEntity,
 
     @Relation(
+        entity = HourlyWeatherEntity::class,
         parentColumn = OneCallDataContract.columns.ID,
         entityColumn = HourlyWeatherContract.columns.OCD_ID,
     )
-    val hourly: List<HourlyWeatherEntity>,
+    val hourly: List<HourlyWeatherWithLists>,
 
-//    @Relation(
-//        parentColumn = OneCallDataContract.columns.ID,
-//        entityColumn = HourlyWeatherContract.columns.DT,
-//    )
-//    val daily: List<DailyWeather>,
-
-) {
-    val OneCallData
-        get() = OneCallData(
-            entity.id,
-            entity.lat,
-            entity.lon,
-            entity.timezone,
-            entity.timezone_offset,
-            hourly.map { it.hourlyWeather },
-            emptyList()
-        )
-}
+    @Relation(
+        entity = DailyWeatherEntity::class,
+        parentColumn = OneCallDataContract.columns.ID,
+        entityColumn = DailyWeatherContract.columns.OCD_ID,
+    )
+    val daily: List<DailyWeatherWithLists>,
+)

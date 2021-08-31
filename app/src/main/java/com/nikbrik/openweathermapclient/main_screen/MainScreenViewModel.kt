@@ -5,15 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikbrik.openweathermapclient.data.WeatherRepository
-import com.nikbrik.openweathermapclient.data.ocd.OneCallData
+import com.nikbrik.openweathermapclient.data.ocd.OneCallDataWithLists
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel : ViewModel() {
     private val repository = WeatherRepository()
-    private val oneCallLiveData = MutableLiveData<List<OneCallData>>()
-    val oneCallData: LiveData<List<OneCallData>>
+    private val oneCallLiveData = MutableLiveData<List<OneCallDataWithLists>>()
+    val oneCallData: LiveData<List<OneCallDataWithLists>>
         get() = oneCallLiveData
     private val errorLiveData = MutableLiveData<String>()
     val error: LiveData<String>
@@ -26,8 +26,9 @@ class MainScreenViewModel : ViewModel() {
 
     fun getData() {
         viewModelScope.launch(Dispatchers.Default + errorHandler) {
-            oneCallLiveData.postValue(repository.getCashedData())
-            oneCallLiveData.postValue(repository.getData())
+//            oneCallLiveData.postValue(repository.getCashedData())
+            val data = repository.getData()
+            oneCallLiveData.postValue(data)
         }
     }
 }

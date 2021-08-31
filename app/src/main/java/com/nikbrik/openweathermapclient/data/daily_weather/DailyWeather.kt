@@ -1,49 +1,54 @@
 package com.nikbrik.openweathermapclient.data.daily_weather
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import com.nikbrik.openweathermapclient.DailyTemp
+import com.nikbrik.openweathermapclient.data.daily_temp.DailyTempContract
+import com.nikbrik.openweathermapclient.data.weather.Weather
+import com.nikbrik.openweathermapclient.data.weather.WeatherContract
+import com.nikbrik.openweathermapclient.data.weather.WeatherEntity
 import com.squareup.moshi.JsonClass
 
-@Entity(
-    tableName = DailyWeatherContract.TABLE_NAME
-)
 @JsonClass(generateAdapter = true)
 data class DailyWeather(
+    val dt: Int,
+    val temp: DailyTemp,
+    val feels_like: DailyTemp,
+    val clouds: Int,
+    val wind_speed: Float,
+    var weather: List<Weather>
+) {
+    fun entityWithParentId(id: Long) =
+        DailyWeatherEntity(dt, clouds, wind_speed, id)
+}
+
+@Entity(tableName = DailyWeatherContract.TABLE_NAME)
+data class DailyWeatherEntity(
     @PrimaryKey
     @ColumnInfo(name = DailyWeatherContract.columns.DT)
     val dt: Int,
-    @ColumnInfo(name = DailyWeatherContract.columns.TEMP)
-    val temp: DailyTemp,
-    @ColumnInfo(name = DailyWeatherContract.columns.FEELS_TEMP)
-    val feels_like: DailyTemp,
     @ColumnInfo(name = DailyWeatherContract.columns.CLOUDS)
     val clouds: Int,
     @ColumnInfo(name = DailyWeatherContract.columns.WIND_SPEED)
     val wind_speed: Float,
     @ColumnInfo(name = DailyWeatherContract.columns.OCD_ID)
     val parent_id: Long?
-//    var weather: List<Weather>
-) {
-    //    fun toDailyWithWeather(): DailyWithWeather {
-//        return DailyWithWeather(this, weather)
-//    }
-    fun withParentId(id: Long): DailyWeather =
-        DailyWeather(dt, temp, feels_like, clouds, wind_speed, id)
-}
+)
 
-// data class DailyWithWeather(
-//    @Embedded
-//    val dailyWeather: DailyWeather,
-//    @Relation(
-//        parentColumn = DailyWeatherContract.columns.DT,
-//        entityColumn = WeatherContract.columns.ID
-//    )
-//    val weathers: List<Weather>,
-// ) {
-//    fun toDailyWeather(): DailyWeather {
-//        dailyWeather.weather = weathers
-//        return dailyWeather
-//    }
-// }
+data class DailyWeatherWithLists(
+    @Embedded
+    val entity: DailyWeatherEntity,
+    @Relation(
+        parentColumn = DailyWeatherContract.columns.DT,
+        entityColumn = DailyTempContract.columns.PARENT_ID,
+    )
+    val temperatureList: List<DailyTemp>,
+    @Relation(
+        parentColumn = DailyWeatherContract.columns.DT,
+        entityColumn = WeatherContract.columns.PARENT_ID
+    )
+    val weatherList: List<WeatherEntity>,
+)

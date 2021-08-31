@@ -1,9 +1,13 @@
 package com.nikbrik.openweathermapclient.data.hourly_weather
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import com.nikbrik.openweathermapclient.data.weather.Weather
+import com.nikbrik.openweathermapclient.data.weather.WeatherContract
+import com.nikbrik.openweathermapclient.data.weather.WeatherEntity
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -34,25 +38,14 @@ data class HourlyWeatherEntity(
     val wind_speed: Float,
     @ColumnInfo(name = HourlyWeatherContract.columns.OCD_ID)
     val parent_id: Long?
-) {
-    val hourlyWeather: HourlyWeather
-        get() = HourlyWeather(dt, temp, feels_like, clouds, wind_speed, emptyList())
+)
 
-    fun withParentId(id: Long): HourlyWeatherEntity =
-        HourlyWeatherEntity(dt, temp, feels_like, clouds, wind_speed, id)
-}
-
-// data class HourlyWithWeather(
-//    @Embedded
-//    val hourlyWeather: HourlyWeather,
-//    @Relation(
-//        parentColumn = HourlyWeatherContract.columns.DT,
-//        entityColumn = WeatherContract.columns.ID
-//    )
-//    val weathers: List<Weather>,
-// ) {
-//    fun toHourlyWeather(): HourlyWeather {
-//        hourlyWeather.weather = weathers
-//        return hourlyWeather
-//    }
-// }
+data class HourlyWeatherWithLists(
+    @Embedded
+    val entity: HourlyWeatherEntity,
+    @Relation(
+        parentColumn = HourlyWeatherContract.columns.DT,
+        entityColumn = WeatherContract.columns.PARENT_ID
+    )
+    val weatherList: List<WeatherEntity>,
+)

@@ -2,24 +2,30 @@ package com.nikbrik.openweathermapclient
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import com.nikbrik.openweathermapclient.data.daily_temp.TempContract
+import androidx.room.PrimaryKey
+import com.nikbrik.openweathermapclient.data.daily_temp.DailyTempContract
 import com.squareup.moshi.JsonClass
 
 @Entity(
-    tableName = TempContract.TABLE_NAME
+    tableName = DailyTempContract.TABLE_NAME
 )
 @JsonClass(generateAdapter = true)
 data class DailyTemp(
-    @ColumnInfo(name = TempContract.columns.MORNING)
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = DailyTempContract.columns.ID)
+    val id: Long?,
+    @ColumnInfo(name = DailyTempContract.columns.MORNING)
     val morn: Float,
-    @ColumnInfo(name = TempContract.columns.DAY)
+    @ColumnInfo(name = DailyTempContract.columns.DAY)
     val day: Float,
-    @ColumnInfo(name = TempContract.columns.EVENING)
+    @ColumnInfo(name = DailyTempContract.columns.EVENING)
     val eve: Float,
-    @ColumnInfo(name = TempContract.columns.NIGHT)
+    @ColumnInfo(name = DailyTempContract.columns.NIGHT)
     val night: Float,
-    @ColumnInfo(name = TempContract.columns.MINIMUM)
+    @ColumnInfo(name = DailyTempContract.columns.MINIMUM)
     val min: Float?,
-    @ColumnInfo(name = TempContract.columns.MAXIMUM)
+    @ColumnInfo(name = DailyTempContract.columns.MAXIMUM)
     val max: Float?,
+    @ColumnInfo(name = DailyTempContract.columns.PARENT_ID)
+    var parent_id: Int?
 )
