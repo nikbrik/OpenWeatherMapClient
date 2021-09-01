@@ -1,30 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/startFragment">
+    app:startDestination="@id/permissionRequestFragment">
 
     <fragment
         android:id="@+id/mainScreenFragment"
-        android:name="com.nikbrik.openweathermapclient.main_screen.MainScreenFragment"
-        android:label="MainScreenFragment" >
+        android:name="com.nikbrik.openweathermapclient.ui.main_screen.MainScreenFragment"
+        android:label="MainScreenFragment"
+        tools:layout="@layout/fragment_main_screen">
         <action
             android:id="@+id/action_mainScreenFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.nikbrik.openweathermapclient.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:name="com.nikbrik.openweathermapclient.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/startFragment"
-        android:name="com.nikbrik.openweathermapclient.start.StartFragment"
-        android:label="StartFragment" >
+        android:name="com.nikbrik.openweathermapclient.ui.start.StartFragment"
+        android:label="StartFragment"
+        tools:layout="@layout/fragment_start">
         <action
             android:id="@+id/action_startFragment_to_mainScreenFragment"
             app:destination="@id/mainScreenFragment" />
         <action
             android:id="@+id/action_startFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/permissionRequestFragment"
+        android:name="com.nikbrik.openweathermapclient.ui.PermissionRequestFragment"
+        android:label="PermissionRequestFragment"
+        tools:layout="@layout/fragment_permission_request">
+        <action
+            android:id="@+id/action_permissionRequestFragment_to_startFragment"
+            app:destination="@id/startFragment" />
     </fragment>
 </navigation>

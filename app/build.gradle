@@ -4,6 +4,7 @@ plugins {
     id "org.jmailen.kotlinter" version "3.3.0"
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs'
+    id "org.jetbrains.kotlin.plugin.parcelize"
 }
 
 android {

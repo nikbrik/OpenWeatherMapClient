@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">OpenWeatherMapClient</string>
-    <string name="settings_button">Settings</string>
+    <string name="need_permissions">Для отображения списка локаций необходимо разрешение</string>
+    <string name="request_permission_button">Разрешить</string>
+    <string name="settings_button">Настройки</string>
     <string-array name="langs">
         <item>English</item>
         <item>Русский</item>
