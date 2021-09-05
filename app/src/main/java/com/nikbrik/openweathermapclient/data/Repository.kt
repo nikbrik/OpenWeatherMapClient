@@ -22,17 +22,46 @@ class Repository {
     private val weatherDao
         get() = Database.instance.weatherDao()
 
+    suspend fun addNew(lat: Float, lon: Float) {
+        val newOcd = oneCallDataFromApi(lat, lon)
+        saveOcdToDB(
+            newOcd.entity.apply {
+                id = (ocdDao.getLastOcdId() ?: 0) + 1
+            },
+            newOcd.hourly,
+            newOcd.daily
+        )
+    }
+
     suspend fun getCashedData(): List<OneCallDataWithLists> {
         return Database.instance.ocdDao().getAllOcd()
     }
 
     suspend fun getData(): List<OneCallDataWithLists> {
 
-        // Верхняя в списке всегда запись о текущем местоположении
-        val currentLocationId = 0L
+        // Повторный запрос к АПИ
+        val currentOcd = oneCallDataFromApi(lat = 10.0F, lon = 10.0F)
 
-        // Удалить запись о текущем местоположении
-        ocdDao.deleteById(currentLocationId)
+        val allOcd = ocdDao.getAllOcd()
+        val abc = allOcd.map { ocdRelations ->
+            if (ocdRelations.entity.id == 0L) {
+                null
+            } else {
+                val ocdJson = oneCallDataFromApi(
+                    ocdRelations.entity.lat,
+                    ocdRelations.entity.lon,
+                )
+                val entity = ocdJson.entity.apply {
+                    id = ocdRelations.entity.id
+                    name = ocdRelations.entity.name
+                }
+
+                val map = mutableMapOf<String, Any>()
+                map["entity"] = entity
+                map["relations"] = ocdRelations
+                map
+            }
+        }
 
         // Полностью очистить детализированные таблицы,
         // ocd оставляем, т.к. данные нужны для повторого запроса
@@ -41,21 +70,23 @@ class Repository {
         dailyTempDao.deleteAll()
         weatherDao.deleteAll()
 
-        // Повторный запрос к АПИ
-        ocdDao.getAllOcd().forEach { ocdRelations ->
-            val ocdJson = oneCallDataFromApi(
-                ocdRelations.entity.lat,
-                ocdRelations.entity.lon,
-            )
-            val entity = ocdJson.entity.apply {
-                id = ocdRelations.entity.id
-                name = ocdRelations.entity.name
+        abc.forEach {
+            if (it != null) {
+                val ocdRelation = it["relations"] as OneCallData
+                saveOcdToDB(
+                    it["entity"] as OneCallDataEntity,
+                    ocdRelation.hourly,
+                    ocdRelation.daily
+                )
             }
-            saveOcdToDB(entity, ocdJson.hourly, ocdJson.daily)
         }
 
+        // Верхняя в списке всегда запись о текущем местоположении
+        val currentLocationId = 0L
+
+        // Удалить запись о текущем местоположении
+        ocdDao.deleteById(currentLocationId)
         // Создание записи о текущем местоположении
-        val currentOcd = oneCallDataFromApi(lat = 10.0F, lon = 10.0F)
         saveOcdToDB(
             currentOcd.entity.apply {
                 id = currentLocationId
@@ -134,7 +165,7 @@ class Repository {
             appid = Networking.openWeatherApiKey,
             lat = lat,
             lon = lon,
-            exclude = "current, minutely",
+            exclude = "minutely",
             lang = "ru",
         )
     }
@@ -144,7 +175,7 @@ class Repository {
         return locations.firstOrNull()?.value ?: ""
     }
 
-    private suspend fun getLocationsByAddress(address: String): List<Location> {
+    suspend fun getLocationsByAddress(address: String): List<Location> {
         return Networking.geotreeApi.getLocationsByAddress(address)
     }
 }

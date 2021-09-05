@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id "org.jmailen.kotlinter" version "3.3.0"
     id 'kotlin-kapt'
-    id 'androidx.navigation.safeargs'
+    id 'androidx.navigation.safeargs.kotlin'
     id "org.jetbrains.kotlin.plugin.parcelize"
 }
 

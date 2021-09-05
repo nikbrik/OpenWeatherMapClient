@@ -22,6 +22,7 @@ data class OneCallData(
     val lon: Float,
     val timezone: String,
     val timezone_offset: Int,
+    val current: HourlyWeather,
     val hourly: List<HourlyWeather>,
     val daily: List<DailyWeather>,
 ) {
@@ -56,6 +57,13 @@ data class OneCallDataEntity(
 data class OneCallDataWithLists(
     @Embedded
     val entity: OneCallDataEntity,
+
+    @Relation(
+        entity = HourlyWeatherEntity::class,
+        parentColumn = OneCallDataContract.columns.ID,
+        entityColumn = HourlyWeatherContract.columns.OCD_ID,
+    )
+    val current: List<HourlyWeatherWithLists>,
 
     @Relation(
         entity = HourlyWeatherEntity::class,

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/permissionRequestFragment">
+    app:startDestination="@id/startFragment">
 
     <fragment
         android:id="@+id/mainScreenFragment"
@@ -23,13 +23,21 @@
         android:id="@+id/startFragment"
         android:name="com.nikbrik.openweathermapclient.ui.start.StartFragment"
         android:label="StartFragment"
-        tools:layout="@layout/fragment_start">
+        tools:layout="@layout/fragment_start_screen">
         <action
             android:id="@+id/action_startFragment_to_mainScreenFragment"
             app:destination="@id/mainScreenFragment" />
         <action
             android:id="@+id/action_startFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_geocoderFragment"
+            app:destination="@id/geocoderFragment" />
+        <argument
+            android:name="location"
+            app:argType="com.nikbrik.openweathermapclient.data.geocoder.Location"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/permissionRequestFragment"
@@ -38,6 +46,15 @@
         tools:layout="@layout/fragment_permission_request">
         <action
             android:id="@+id/action_permissionRequestFragment_to_startFragment"
+            app:destination="@id/startFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/geocoderFragment"
+        android:name="com.nikbrik.openweathermapclient.ui.map.GeocoderFragment"
+        android:label="GeocoderFragment"
+        tools:layout="@layout/fragment_geocoder">
+        <action
+            android:id="@+id/action_geocoderFragment_to_startFragment"
             app:destination="@id/startFragment" />
     </fragment>
 </navigation>
