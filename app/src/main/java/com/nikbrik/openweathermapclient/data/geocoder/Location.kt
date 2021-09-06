@@ -22,7 +22,7 @@ data class Location(
                 levels.level3 != null -> levels.level3.geo_inside
                 levels.level2 != null -> levels.level2.geo_inside
                 levels.level1 != null -> levels.level1.geo_inside
-                else -> Geo(0F, 0F)
+                else -> Geo(0.0, 0.0)
             }
     }
 }

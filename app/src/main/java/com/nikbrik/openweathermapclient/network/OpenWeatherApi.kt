@@ -8,8 +8,8 @@ interface OpenWeatherApi {
     @GET("/data/2.5/onecall")
     suspend fun oneCallRequest(
         @Query("appid") appid: String,
-        @Query("lat") lat: Float,
-        @Query("lon") lon: Float,
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
         @Query("exclude") exclude: String,
         @Query("lang") lang: String,
     ): OneCallData

@@ -18,8 +18,8 @@ import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 data class OneCallData(
-    val lat: Float,
-    val lon: Float,
+    val lat: Double,
+    val lon: Double,
     val timezone: String,
     val timezone_offset: Int,
     val current: HourlyWeather,
@@ -36,13 +36,13 @@ data class OneCallData(
     primaryKeys = [
         OneCallDataContract.columns.LATITUDE,
         OneCallDataContract.columns.LONGITUDE,
-    ]
+    ],
 )
 data class OneCallDataEntity(
     @ColumnInfo(name = OneCallDataContract.columns.LATITUDE)
-    val lat: Float,
+    val lat: Double,
     @ColumnInfo(name = OneCallDataContract.columns.LONGITUDE)
-    val lon: Float,
+    val lon: Double,
     @ColumnInfo(name = OneCallDataContract.columns.TIMEZONE)
     val timezone: String,
     @ColumnInfo(name = OneCallDataContract.columns.TIMEZONE_OFFSET)

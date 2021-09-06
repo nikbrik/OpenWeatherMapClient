@@ -7,8 +7,8 @@ import retrofit2.http.Query
 interface GeotreeApi {
     @GET("/address.php")
     suspend fun getAddressByCoordinates(
-        @Query("lon") longitude: Float,
-        @Query("lat") latitude: Float,
+        @Query("lon") longitude: Double,
+        @Query("lat") latitude: Double,
     ): List<Location>
 
     @GET("/address.php")

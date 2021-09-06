@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import com.nikbrik.openweathermapclient.data.geocoder.Location
-import com.nikbrik.openweathermapclient.databinding.GeocoderItemBinding
+import com.nikbrik.openweathermapclient.databinding.ItemGeocoderBinding
 
 class GeocoderAdapterDelegate(private val itemCallback: (position: Int) -> Unit) :
     AbsListItemAdapterDelegate<Location, Location, GeocoderViewHolder>() {
@@ -18,7 +18,7 @@ class GeocoderAdapterDelegate(private val itemCallback: (position: Int) -> Unit)
 
     override fun onCreateViewHolder(parent: ViewGroup): GeocoderViewHolder {
         return GeocoderViewHolder(
-            GeocoderItemBinding.inflate(
+            ItemGeocoderBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

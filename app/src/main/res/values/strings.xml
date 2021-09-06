@@ -1,9 +1,14 @@
 <resources>
-    <string name="app_name">OpenWeatherMapClient</string>
-    <string name="need_permissions">Для отображения списка локаций необходимо разрешение</string>
+    <string name="app_name">Клиент для Open Weather Map</string>
+    <string name="need_permissions">Для получения данных о погоде в текущем местоположении необходимо получить разрешение</string>
     <string name="request_permission_button">Разрешить</string>
     <string name="settings_button">Настройки</string>
     <string name="add_place">Добавить местоположение</string>
+    <string name="rationale_dialog_ok">Понятно</string>
+    <string name="rationale_dialog_cancel">Отмена</string>
+    <string name="refresh">Обновить</string>
+    <string name="current_location">Текущее местоположение</string>
+    <string name="coordinates">lat = %1$f; lon = %2$f</string>
     <string-array name="langs">
         <item>English</item>
         <item>Русский</item>

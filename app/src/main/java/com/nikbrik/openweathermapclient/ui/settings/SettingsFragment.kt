@@ -23,7 +23,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         if (viewModel.langs.isEmpty()) {
             viewModel.langs = resources.getStringArray(R.array.langs)
         }
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, viewModel.langs)
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_settings, viewModel.langs)
         binding.langAct.setAdapter(adapter)
     }
 }

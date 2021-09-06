@@ -4,11 +4,11 @@ import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
 import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataWithLists
 
-class OneCallDataAdapter :
+class StartAdapter(private val itemCallback: (position: Int) -> Unit) :
     AsyncListDifferDelegationAdapter<OneCallDataWithLists>(OneCallDataDiffUtilCallback()) {
 
     init {
-        delegatesManager.addDelegate(OneCallDataAdapterDelegate())
+        delegatesManager.addDelegate(StartAdapterDelegate(itemCallback))
     }
 
     class OneCallDataDiffUtilCallback : DiffUtil.ItemCallback<OneCallDataWithLists>() {

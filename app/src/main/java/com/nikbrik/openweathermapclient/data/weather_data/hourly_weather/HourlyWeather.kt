@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.nikbrik.openweathermapclient.data.weather_data.weather.Weather
 import com.nikbrik.openweathermapclient.data.weather_data.weather.WeatherContract
@@ -26,9 +25,14 @@ data class HourlyWeather(
 }
 
 @Parcelize
-@Entity(tableName = HourlyWeatherContract.TABLE_NAME)
+@Entity(
+    tableName = HourlyWeatherContract.TABLE_NAME,
+    primaryKeys = [
+        HourlyWeatherContract.columns.DT,
+        HourlyWeatherContract.columns.OCD_ID,
+    ],
+)
 data class HourlyWeatherEntity(
-    @PrimaryKey
     @ColumnInfo(name = HourlyWeatherContract.columns.DT)
     val dt: Int,
     @ColumnInfo(name = HourlyWeatherContract.columns.TEMP)
@@ -40,7 +44,7 @@ data class HourlyWeatherEntity(
     @ColumnInfo(name = HourlyWeatherContract.columns.WIND_SPEED)
     val wind_speed: Float,
     @ColumnInfo(name = HourlyWeatherContract.columns.OCD_ID)
-    val parent_id: Long?
+    val parent_id: Long,
 ) : Parcelable
 
 @Parcelize

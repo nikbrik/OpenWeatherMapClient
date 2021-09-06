@@ -20,6 +20,13 @@ class StartViewModel : ViewModel() {
     val error: LiveData<Throwable>
         get() = errorLiveData
 
+    private var lat = 0.0
+    private var lon = 0.0
+    fun setCurrentLocation(lat: Double, lon: Double) {
+        this.lat = lat
+        this.lon = lon
+    }
+
     private val errorHandler =
         CoroutineExceptionHandler { _, throwable ->
             errorLiveData.postValue(throwable)
@@ -28,13 +35,13 @@ class StartViewModel : ViewModel() {
     fun getStartData() {
         viewModelScope.launch(Dispatchers.Default + errorHandler) {
             ocdLiveData.postValue(repository.getCashedData())
-            ocdLiveData.postValue(repository.getData())
+            ocdLiveData.postValue(repository.getData(lat, lon))
         }
     }
 
-    fun addNew(geoCoordinates: Geo) {
+    fun addNew(value: String, geoCoordinates: Geo) {
         viewModelScope.launch(Dispatchers.Default + errorHandler) {
-            repository.addNew(geoCoordinates.lat, geoCoordinates.lon)
+            repository.addNew(value, geoCoordinates.lat, geoCoordinates.lon)
             ocdLiveData.postValue(repository.getCashedData())
         }
     }

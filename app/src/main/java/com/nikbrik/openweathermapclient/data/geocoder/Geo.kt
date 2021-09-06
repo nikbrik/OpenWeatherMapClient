@@ -7,6 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class Geo(
-    val lon: Float,
-    val lat: Float,
+    val lon: Double,
+    val lat: Double,
 ) : Parcelable

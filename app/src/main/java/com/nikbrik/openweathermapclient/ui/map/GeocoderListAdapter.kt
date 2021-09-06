@@ -13,7 +13,7 @@ class GeocoderListAdapter(private val itemCallback: (position: Int) -> Unit) :
 
     class GeocoderDiffUtilCallback : DiffUtil.ItemCallback<Location>() {
         override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
-            return oldItem.value == oldItem.value
+            return oldItem.value == newItem.value
         }
 
         override fun areContentsTheSame(oldItem: Location, newItem: Location): Boolean {

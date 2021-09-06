@@ -22,11 +22,12 @@ class Repository {
     private val weatherDao
         get() = Database.instance.weatherDao()
 
-    suspend fun addNew(lat: Float, lon: Float) {
+    suspend fun addNew(value: String, lat: Double, lon: Double) {
         val newOcd = oneCallDataFromApi(lat, lon)
         saveOcdToDB(
             newOcd.entity.apply {
                 id = (ocdDao.getLastOcdId() ?: 0) + 1
+                name = value
             },
             newOcd.hourly,
             newOcd.daily
@@ -37,13 +38,13 @@ class Repository {
         return Database.instance.ocdDao().getAllOcd()
     }
 
-    suspend fun getData(): List<OneCallDataWithLists> {
+    suspend fun getData(lat: Double, lon: Double): List<OneCallDataWithLists> {
 
         // Повторный запрос к АПИ
-        val currentOcd = oneCallDataFromApi(lat = 10.0F, lon = 10.0F)
+        val currentOcd = oneCallDataFromApi(lat, lon)
 
         val allOcd = ocdDao.getAllOcd()
-        val abc = allOcd.map { ocdRelations ->
+        val allCashedData = allOcd.map { ocdRelations ->
             if (ocdRelations.entity.id == 0L) {
                 null
             } else {
@@ -58,7 +59,7 @@ class Repository {
 
                 val map = mutableMapOf<String, Any>()
                 map["entity"] = entity
-                map["relations"] = ocdRelations
+                map["ocdJson"] = ocdJson
                 map
             }
         }
@@ -70,9 +71,9 @@ class Repository {
         dailyTempDao.deleteAll()
         weatherDao.deleteAll()
 
-        abc.forEach {
+        allCashedData.forEach {
             if (it != null) {
-                val ocdRelation = it["relations"] as OneCallData
+                val ocdRelation = it["ocdJson"] as OneCallData
                 saveOcdToDB(
                     it["entity"] as OneCallDataEntity,
                     ocdRelation.hourly,
@@ -158,8 +159,8 @@ class Repository {
     }
 
     private suspend fun oneCallDataFromApi(
-        lat: Float,
-        lon: Float,
+        lat: Double,
+        lon: Double,
     ): OneCallData {
         return Networking.openWeatherApi.oneCallRequest(
             appid = Networking.openWeatherApiKey,
@@ -170,7 +171,7 @@ class Repository {
         )
     }
 
-    private suspend fun getAddressByCoordinates(lon: Float, lat: Float): String {
+    private suspend fun getAddressByCoordinates(lon: Double, lat: Double): String {
         val locations = Networking.geotreeApi.getAddressByCoordinates(lon, lat)
         return locations.firstOrNull()?.value ?: ""
     }
