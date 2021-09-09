@@ -85,20 +85,16 @@ class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
 
     private fun initList() {
         geocoderAdapter = GeocoderListAdapter { position ->
-            val navController = findNavController()
-            navController.navigate(
+            findNavController().navigate(
                 GeocoderFragmentDirections.actionGeocoderFragmentToStartFragment(
                     geocoderAdapter.items.getOrNull(position)
-                )
+                ),
             )
-            navController.popBackStack()
         }
         binding?.recyclerView?.apply {
             adapter = geocoderAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
         }
-
-        geocoderAdapter.items = viewModel.locations.value ?: emptyList()
     }
 }

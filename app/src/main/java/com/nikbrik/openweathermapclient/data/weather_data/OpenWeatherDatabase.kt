@@ -34,6 +34,6 @@ abstract class OpenWeatherDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "openweatherdb"
-        const val DB_VERSION = 18
+        const val DB_VERSION = 20
     }
 }

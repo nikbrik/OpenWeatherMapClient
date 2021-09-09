@@ -14,7 +14,7 @@ data class Weather(
     val description: String,
     val icon: String,
 ) {
-    fun entityWithParentId(parent_id: Long): WeatherEntity {
+    fun entityWithParentId(parent_id: String): WeatherEntity {
         return WeatherEntity(key = 0, id, main, description, icon, parent_id)
     }
 
@@ -41,5 +41,5 @@ data class WeatherEntity(
     @ColumnInfo(name = WeatherContract.columns.ICON)
     val icon: String,
     @ColumnInfo(name = WeatherContract.columns.PARENT_ID)
-    var parent_id: Long?
+    var parent_id: String?
 ) : Parcelable

@@ -50,6 +50,9 @@
         tools:layout="@layout/fragment_geocoder">
         <action
             android:id="@+id/action_geocoderFragment_to_startFragment"
-            app:destination="@id/startFragment" />
+            app:destination="@id/startFragment"
+            app:popUpTo="@id/startFragment"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true"/>
     </fragment>
 </navigation>

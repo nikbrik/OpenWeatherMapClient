@@ -116,16 +116,18 @@ class Repository {
         hourlyWeatherDao.insertList(
             hourly.map { hourlyWeather ->
 
+                // Получение записи с ид
+                val hourlyWeatherEntity = hourlyWeather.entityWithParentId(ocdEntity.id)
+
                 // Сохранить объекты погоды
                 weatherDao.insertList(
                     hourlyWeather.weather.map {
                         // Преобразование в запись БД и передача родительского ид
-                        it.entityWithParentId(hourlyWeather.dt)
+                        it.entityWithParentId(hourlyWeatherEntity.id)
                     }
                 )
 
-                // Получение записи с ид
-                hourlyWeather.entityWithParentId(ocdEntity.id)
+                hourlyWeatherEntity
             }
         )
     }
@@ -136,11 +138,19 @@ class Repository {
     ) {
         dailyWeatherDao.insertList(
             daily.map { dailyWeather ->
+
+                // Получение записи с id
+                val dailyWeatherEntity = dailyWeather.entityWithParentId(ocdEntity.id)
+
                 // Сохранить объекты температуры
                 dailyTempDao.insertList(
                     listOf(
-                        dailyWeather.temp.apply { parent_id = dailyWeather.dt },
-                        dailyWeather.feels_like.apply { parent_id = dailyWeather.dt }
+                        dailyWeather.temp.apply {
+                            parent_id = dailyWeatherEntity.id
+                        },
+                        dailyWeather.feels_like.apply {
+                            parent_id = dailyWeatherEntity.id
+                        }
                     )
                 )
 
@@ -148,12 +158,11 @@ class Repository {
                 weatherDao.insertList(
                     dailyWeather.weather.map {
                         // Преобразование в запись БД и передача родительского ид
-                        it.entityWithParentId(dailyWeather.dt)
+                        it.entityWithParentId(dailyWeatherEntity.id)
                     }
                 )
 
-                // Получение записи с id
-                dailyWeather.entityWithParentId(ocdEntity.id)
+                dailyWeatherEntity
             }
         )
     }

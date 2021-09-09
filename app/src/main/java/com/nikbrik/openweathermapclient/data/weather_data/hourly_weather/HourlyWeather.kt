@@ -21,18 +21,19 @@ data class HourlyWeather(
     var weather: List<Weather>
 ) {
     fun entityWithParentId(id: Long) =
-        HourlyWeatherEntity(dt, temp, feels_like, clouds, wind_speed, id)
+        HourlyWeatherEntity(id.toString() + dt.toString(), dt, temp, feels_like, clouds, wind_speed, id)
 }
 
 @Parcelize
 @Entity(
     tableName = HourlyWeatherContract.TABLE_NAME,
     primaryKeys = [
-        HourlyWeatherContract.columns.DT,
-        HourlyWeatherContract.columns.OCD_ID,
+        HourlyWeatherContract.columns.ID,
     ],
 )
 data class HourlyWeatherEntity(
+    @ColumnInfo(name = HourlyWeatherContract.columns.ID)
+    val id: String,
     @ColumnInfo(name = HourlyWeatherContract.columns.DT)
     val dt: Long,
     @ColumnInfo(name = HourlyWeatherContract.columns.TEMP)
@@ -52,7 +53,7 @@ data class HourlyWeatherWithLists(
     @Embedded
     val entity: HourlyWeatherEntity,
     @Relation(
-        parentColumn = HourlyWeatherContract.columns.DT,
+        parentColumn = HourlyWeatherContract.columns.ID,
         entityColumn = WeatherContract.columns.PARENT_ID
     )
     val weatherList: List<WeatherEntity>,

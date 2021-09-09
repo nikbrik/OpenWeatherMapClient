@@ -23,18 +23,19 @@ data class DailyWeather(
     var weather: List<Weather>
 ) {
     fun entityWithParentId(id: Long) =
-        DailyWeatherEntity(dt, clouds, wind_speed, id)
+        DailyWeatherEntity(id.toString() + dt.toString(), dt, clouds, wind_speed, id)
 }
 
 @Parcelize
 @Entity(
     tableName = DailyWeatherContract.TABLE_NAME,
     primaryKeys = [
-        DailyWeatherContract.columns.DT,
-        DailyWeatherContract.columns.OCD_ID,
+        DailyWeatherContract.columns.ID,
     ],
 )
 data class DailyWeatherEntity(
+    @ColumnInfo(name = DailyWeatherContract.columns.ID)
+    val id: String,
     @ColumnInfo(name = DailyWeatherContract.columns.DT)
     val dt: Long,
     @ColumnInfo(name = DailyWeatherContract.columns.CLOUDS)
@@ -42,7 +43,7 @@ data class DailyWeatherEntity(
     @ColumnInfo(name = DailyWeatherContract.columns.WIND_SPEED)
     val wind_speed: Float,
     @ColumnInfo(name = DailyWeatherContract.columns.OCD_ID)
-    val parent_id: Long
+    val parent_id: Long,
 ) : Parcelable
 
 @Parcelize
@@ -50,12 +51,12 @@ data class DailyWeatherWithLists(
     @Embedded
     val entity: DailyWeatherEntity,
     @Relation(
-        parentColumn = DailyWeatherContract.columns.DT,
+        parentColumn = DailyWeatherContract.columns.ID,
         entityColumn = DailyTempContract.columns.PARENT_ID,
     )
     val temperatureList: List<DailyTemp>,
     @Relation(
-        parentColumn = DailyWeatherContract.columns.DT,
+        parentColumn = DailyWeatherContract.columns.ID,
         entityColumn = WeatherContract.columns.PARENT_ID
     )
     val weatherList: List<WeatherEntity>,

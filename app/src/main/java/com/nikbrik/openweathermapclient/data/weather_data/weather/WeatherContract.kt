@@ -9,5 +9,6 @@ object WeatherContract {
         const val DESCRIPTION = "description"
         const val ICON = "icon"
         const val PARENT_ID = "parent_id"
+        const val OCD_ID = "ocd_id"
     }
 }
