@@ -30,5 +30,5 @@ data class DailyTemp(
     @ColumnInfo(name = DailyTempContract.columns.MAXIMUM)
     val max: Float?,
     @ColumnInfo(name = DailyTempContract.columns.PARENT_ID)
-    var parent_id: Int?
+    var parent_id: Long?
 ) : Parcelable

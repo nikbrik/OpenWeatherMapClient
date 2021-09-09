@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 data class HourlyWeather(
-    val dt: Int,
+    val dt: Long,
     val temp: Float,
     val feels_like: Float,
     val clouds: Int,
@@ -34,7 +34,7 @@ data class HourlyWeather(
 )
 data class HourlyWeatherEntity(
     @ColumnInfo(name = HourlyWeatherContract.columns.DT)
-    val dt: Int,
+    val dt: Long,
     @ColumnInfo(name = HourlyWeatherContract.columns.TEMP)
     val temp: Float,
     @ColumnInfo(name = HourlyWeatherContract.columns.FEELS)

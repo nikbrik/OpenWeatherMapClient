@@ -14,8 +14,13 @@ data class Weather(
     val description: String,
     val icon: String,
 ) {
-    fun entityWithParentId(parent_id: Int): WeatherEntity {
+    fun entityWithParentId(parent_id: Long): WeatherEntity {
         return WeatherEntity(key = 0, id, main, description, icon, parent_id)
+    }
+
+    companion object {
+        const val ICON_PATH = "https://openweathermap.org/img/wn/"
+        const val ICON_FILE_NAME = "@2x.png"
     }
 }
 
@@ -36,5 +41,5 @@ data class WeatherEntity(
     @ColumnInfo(name = WeatherContract.columns.ICON)
     val icon: String,
     @ColumnInfo(name = WeatherContract.columns.PARENT_ID)
-    var parent_id: Int?
+    var parent_id: Long?
 ) : Parcelable

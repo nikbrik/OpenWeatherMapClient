@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
-import by.kirich1409.viewbindingdelegate.viewBinding
+import androidx.fragment.app.viewModels
 import com.nikbrik.openweathermapclient.R
-import com.nikbrik.openweathermapclient.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
-    private val binding: FragmentSettingsBinding by viewBinding()
-    private val viewModel = SettingsViewModel()
+    private val viewModel: SettingsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -24,6 +22,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             viewModel.langs = resources.getStringArray(R.array.langs)
         }
         val adapter = ArrayAdapter(requireContext(), R.layout.item_settings, viewModel.langs)
-        binding.langAct.setAdapter(adapter)
+//        binding.langAct.setAdapter(adapter)
     }
 }

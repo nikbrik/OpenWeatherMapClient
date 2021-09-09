@@ -1,6 +1,7 @@
 package com.nikbrik.openweathermapclient.ui.map
 
 import androidx.recyclerview.widget.RecyclerView
+import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.data.geocoder.Location
 import com.nikbrik.openweathermapclient.databinding.ItemGeocoderBinding
 
@@ -16,6 +17,12 @@ class GeocoderViewHolder(
     }
 
     fun bind(location: Location) {
-        binding.textView.text = location.toString()
+        val coordinates = location.getCoordinates()
+        binding.textView.text = binding.root.resources.getString(
+            R.string.location,
+            coordinates.lat,
+            coordinates.lon,
+            location.value,
+        )
     }
 }

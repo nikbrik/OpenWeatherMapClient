@@ -9,6 +9,9 @@
     <string name="refresh">Обновить</string>
     <string name="current_location">Текущее местоположение</string>
     <string name="coordinates">lat = %1$f; lon = %2$f</string>
+    <string name="location">(%1$f; %2$f) %3$s</string>
+    <string name="weather_icon">Иконка погоды</string>
+    <string name="search">Поиск</string>
     <string-array name="langs">
         <item>English</item>
         <item>Русский</item>

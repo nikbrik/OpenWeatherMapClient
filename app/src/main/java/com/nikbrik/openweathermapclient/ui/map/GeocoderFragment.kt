@@ -1,20 +1,36 @@
 package com.nikbrik.openweathermapclient.ui.map
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.databinding.FragmentGeocoderBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
 import timber.log.Timber
 
 class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
-    private val binding: FragmentGeocoderBinding by viewBinding()
-    private val viewModel = GeocoderViewModel()
+    private var binding: FragmentGeocoderBinding? = null
+    private val viewModel: GeocoderViewModel by viewModels()
     private var geocoderAdapter: GeocoderListAdapter by autoCleared()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentGeocoderBinding.inflate(
+            LayoutInflater.from(requireContext()),
+            container,
+            false
+        )
+        return binding!!.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,6 +38,15 @@ class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
         initList()
         observe()
         addListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     private fun observe() {
@@ -36,23 +61,44 @@ class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
     }
 
     private fun addListeners() {
-        binding.search.setOnClickListener {
-            viewModel.searchLocation(binding.editText.text.toString())
+        binding?.apply {
+
+            toolbar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+
+            val search = toolbar.menu.findItem(R.id.search)
+
+            val actionSearchView = search.actionView as SearchView
+            actionSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    query?.let { viewModel.searchLocation(it) }
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return true
+                }
+            })
         }
     }
 
     private fun initList() {
         geocoderAdapter = GeocoderListAdapter { position ->
-            findNavController().navigate(
+            val navController = findNavController()
+            navController.navigate(
                 GeocoderFragmentDirections.actionGeocoderFragmentToStartFragment(
                     geocoderAdapter.items.getOrNull(position)
                 )
             )
+            navController.popBackStack()
         }
-        binding.recyclerView.apply {
+        binding?.recyclerView?.apply {
             adapter = geocoderAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
         }
+
+        geocoderAdapter.items = viewModel.locations.value ?: emptyList()
     }
 }

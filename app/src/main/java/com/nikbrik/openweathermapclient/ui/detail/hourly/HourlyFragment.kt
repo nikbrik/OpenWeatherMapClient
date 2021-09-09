@@ -1,10 +1,11 @@
 package com.nikbrik.openweathermapclient.ui.detail.hourly
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.app.withArguments
 import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeatherWithLists
@@ -13,8 +14,26 @@ import com.nikbrik.openweathermapclient.extensions.autoCleared
 
 class HourlyFragment : Fragment(R.layout.fragment_hourly) {
 
-    private val binding: FragmentHourlyBinding by viewBinding()
+    private var binding: FragmentHourlyBinding? = null
     private var hourlyAdapter: HourlyListAdapter by autoCleared()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentHourlyBinding.inflate(
+            LayoutInflater.from(requireContext()),
+            container,
+            false
+        )
+        return binding!!.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -24,10 +43,10 @@ class HourlyFragment : Fragment(R.layout.fragment_hourly) {
 
     private fun initList() {
         hourlyAdapter = HourlyListAdapter()
-        binding.recyclerView.apply {
+        binding?.recyclerView?.apply {
             adapter = hourlyAdapter
             layoutManager = LinearLayoutManager(requireContext())
-//            setHasFixedSize(true)
+            setHasFixedSize(true)
         }
         hourlyAdapter.apply {
             val hourlyWeatherArray = requireArguments().getParcelableArray(KEY_HOURLY_LIST)

@@ -12,5 +12,6 @@ interface OpenWeatherApi {
         @Query("lon") lon: Double,
         @Query("exclude") exclude: String,
         @Query("lang") lang: String,
+        @Query("units") units: String,
     ): OneCallData
 }

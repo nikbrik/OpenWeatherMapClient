@@ -16,8 +16,7 @@ class DailyListAdapter() :
             oldItem: DailyWeatherWithLists,
             newItem: DailyWeatherWithLists
         ): Boolean {
-            return oldItem.entity.dt == newItem.entity.dt &&
-                oldItem.entity.parent_id == newItem.entity.parent_id
+            return oldItem.entity.dt == newItem.entity.dt
         }
 
         override fun areContentsTheSame(

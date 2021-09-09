@@ -168,6 +168,7 @@ class Repository {
             lon = lon,
             exclude = "minutely",
             lang = "ru",
+            units = "metric",
         )
     }
 

@@ -5,15 +5,17 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -21,6 +23,8 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.app.toast
 import com.nikbrik.openweathermapclient.databinding.FragmentStartScreenBinding
@@ -29,17 +33,14 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class StartFragment : Fragment(R.layout.fragment_start_screen) {
-    private val binding: FragmentStartScreenBinding by viewBinding()
-    private val viewModel = StartViewModel()
+    private var binding: FragmentStartScreenBinding? = null
+    private val viewModel: StartViewModel by viewModels()
     private var ocdAdapter: StartAdapter by autoCleared()
     private val args: StartFragmentArgs by navArgs()
-
-    // +++ РАБОТА С ГЕОЛОКАЦИЕЙ
 
     // Получение текущего местоположения
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
-    private var requestingLocationUpdates = true
     private lateinit var locationCallback: LocationCallback
 
     // Контракт для запроса разрешений
@@ -52,20 +53,119 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
                 val isGranted = it.value
                 when (it.key) {
                     Manifest.permission.ACCESS_FINE_LOCATION -> {
-                        processRequestResult(isGranted)
+                        if (isGranted) getLastLocation()
                     }
                 }
             }
         }
 
-    @SuppressLint("MissingPermission")
-    private fun processRequestResult(isLocationPermissionGranted: Boolean) {
-        if (isLocationPermissionGranted) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener {
-                    refreshData(it.latitude, it.longitude)
-                }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (this::fusedLocationClient.isInitialized.not()) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         }
+
+        if (this::locationCallback.isInitialized.not()) {
+            locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult?) {
+                    locationResult ?: return
+                    locationResult.lastLocation.apply {
+                        refreshData(latitude, longitude)
+                    }
+                }
+            }
+        }
+
+        if (this::locationRequest.isInitialized.not()) {
+            locationRequest = LocationRequest.create().apply {
+                interval = TimeUnit.MINUTES.toMillis(10)
+                fastestInterval = TimeUnit.MINUTES.toMillis(5)
+                maxWaitTime = TimeUnit.MINUTES.toMillis(20)
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentStartScreenBinding.inflate(
+            LayoutInflater.from(requireContext()), container, false
+        )
+        return binding!!.root
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        checkGooglePlayServices()
+
+        if (isLocationPermissionGranted()) {
+            getLastLocation()
+        } else {
+            tryGetLocationPermission()
+        }
+
+        addListeners()
+        initList()
+        observe()
+
+        args.location?.let {
+            viewModel.addNew(it.value, it.getCoordinates())
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        doIfGoogleApiAvailable {
+            if (isLocationPermissionGranted()) {
+                startLocationUpdates()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopLocationUpdates()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    // +++ Получение местоположения и связанных разрешений
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener {
+                it ?: return@addOnSuccessListener
+                refreshData(it.latitude, it.longitude)
+            }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocationImmediately() {
+        fusedLocationClient.getCurrentLocation(
+            LocationRequest.PRIORITY_HIGH_ACCURACY,
+            object : CancellationToken() {
+                override fun isCancellationRequested(): Boolean {
+                    return false
+                }
+
+                override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {
+                    return this
+                }
+            }
+        )
+            .addOnSuccessListener {
+                refreshData(it.latitude, it.longitude)
+            }
     }
 
     private fun isLocationPermissionGranted(): Boolean {
@@ -110,11 +210,6 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
             .addOnSuccessListener { run(action) }
     }
 
-    private fun refreshData(lat: Double, lon: Double) {
-        viewModel.setCurrentLocation(lat, lon)
-        viewModel.getStartData()
-    }
-
     private fun checkGooglePlayServices() {
         val result = GoogleApiAvailability.getInstance()
             .isGooglePlayServicesAvailable(requireContext())
@@ -137,103 +232,41 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
     }
 
     private fun stopLocationUpdates() {
-        requestingLocationUpdates = true
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
-        requestingLocationUpdates = false
-
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
             locationCallback,
             Looper.getMainLooper()
         )
     }
+    // --- Получение местоположения и связанных разрешений
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                locationResult.lastLocation.apply {
-                    refreshData(latitude, longitude)
-                }
-            }
-        }
-
-        locationRequest = LocationRequest.create().apply {
-            interval = TimeUnit.SECONDS.toMillis(10)
-            fastestInterval = TimeUnit.SECONDS.toMillis(5)
-            maxWaitTime = TimeUnit.MINUTES.toMillis(5)
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-    // --- РАБОТА С ГЕОЛОКАЦИЕЙ
-
-    @SuppressLint("MissingPermission")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        checkGooglePlayServices()
-        if (isLocationPermissionGranted()) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener {
-                    it ?: return@addOnSuccessListener
-                    refreshData(it.latitude, it.longitude)
-                }
-        } else {
-            tryGetLocationPermission()
-        }
-
-        addListeners()
-        initList()
-        observe()
-
-        args.location?.let {
-            viewModel.addNew(it.value, it.getCoordinates())
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        doIfGoogleApiAvailable {
-            if (isLocationPermissionGranted()) {
-                startLocationUpdates()
-            }
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        doIfGoogleApiAvailable {
-            if (isLocationPermissionGranted()) {
-                stopLocationUpdates()
-            }
-        }
+    private fun refreshData(lat: Double, lon: Double) {
+        viewModel.setCurrentLocation(lat, lon)
+        viewModel.getStartData()
     }
 
     @SuppressLint("MissingPermission")
     private fun addListeners() {
-        binding.addElement.setOnClickListener {
+        binding?.addElement?.setOnClickListener {
             findNavController().navigate(
                 StartFragmentDirections.actionStartFragmentToGeocoderFragment()
             )
         }
-        binding.refresh.setOnClickListener {
-            doIfGoogleApiAvailable {
-                if (isLocationPermissionGranted()) {
-                    fusedLocationClient.lastLocation
-                        .addOnSuccessListener {
-                            refreshData(it.latitude, it.longitude)
-                        }
-                } else {
-                    tryGetLocationPermission()
+        binding?.apply {
+            toolbar.menu.findItem(R.id.refresh).setOnMenuItemClickListener {
+                doIfGoogleApiAvailable {
+                    if (isLocationPermissionGranted()) {
+                        getCurrentLocationImmediately()
+                    } else {
+                        tryGetLocationPermission()
+                    }
                 }
+                true
             }
         }
     }
@@ -257,7 +290,7 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
                 )
             )
         }
-        binding.recyclerView.apply {
+        binding?.recyclerView?.apply {
             adapter = ocdAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
