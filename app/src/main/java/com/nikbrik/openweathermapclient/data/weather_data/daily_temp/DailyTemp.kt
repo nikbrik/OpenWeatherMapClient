@@ -15,20 +15,20 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class DailyTemp(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = DailyTempContract.columns.ID)
+    @ColumnInfo(name = DailyTempContract.Columns.ID)
     val id: Long?,
-    @ColumnInfo(name = DailyTempContract.columns.MORNING)
+    @ColumnInfo(name = DailyTempContract.Columns.MORNING)
     val morn: Float,
-    @ColumnInfo(name = DailyTempContract.columns.DAY)
+    @ColumnInfo(name = DailyTempContract.Columns.DAY)
     val day: Float,
-    @ColumnInfo(name = DailyTempContract.columns.EVENING)
+    @ColumnInfo(name = DailyTempContract.Columns.EVENING)
     val eve: Float,
-    @ColumnInfo(name = DailyTempContract.columns.NIGHT)
+    @ColumnInfo(name = DailyTempContract.Columns.NIGHT)
     val night: Float,
-    @ColumnInfo(name = DailyTempContract.columns.MINIMUM)
+    @ColumnInfo(name = DailyTempContract.Columns.MINIMUM)
     val min: Float?,
-    @ColumnInfo(name = DailyTempContract.columns.MAXIMUM)
+    @ColumnInfo(name = DailyTempContract.Columns.MAXIMUM)
     val max: Float?,
-    @ColumnInfo(name = DailyTempContract.columns.PARENT_ID)
+    @ColumnInfo(name = DailyTempContract.Columns.PARENT_ID)
     var parent_id: String?,
 ) : Parcelable

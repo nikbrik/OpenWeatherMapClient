@@ -28,23 +28,23 @@ data class HourlyWeather(
 @Entity(
     tableName = HourlyWeatherContract.TABLE_NAME,
     primaryKeys = [
-        HourlyWeatherContract.columns.ID,
+        HourlyWeatherContract.Columns.ID,
     ],
 )
 data class HourlyWeatherEntity(
-    @ColumnInfo(name = HourlyWeatherContract.columns.ID)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.ID)
     val id: String,
-    @ColumnInfo(name = HourlyWeatherContract.columns.DT)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.DT)
     val dt: Long,
-    @ColumnInfo(name = HourlyWeatherContract.columns.TEMP)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.TEMP)
     val temp: Float,
-    @ColumnInfo(name = HourlyWeatherContract.columns.FEELS)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.FEELS)
     val feels_like: Float,
-    @ColumnInfo(name = HourlyWeatherContract.columns.CLOUDS)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.CLOUDS)
     val clouds: Int,
-    @ColumnInfo(name = HourlyWeatherContract.columns.WIND_SPEED)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.WIND_SPEED)
     val wind_speed: Float,
-    @ColumnInfo(name = HourlyWeatherContract.columns.OCD_ID)
+    @ColumnInfo(name = HourlyWeatherContract.Columns.OCD_ID)
     val parent_id: Long,
 ) : Parcelable
 
@@ -53,8 +53,8 @@ data class HourlyWeatherWithLists(
     @Embedded
     val entity: HourlyWeatherEntity,
     @Relation(
-        parentColumn = HourlyWeatherContract.columns.ID,
-        entityColumn = WeatherContract.columns.PARENT_ID
+        parentColumn = HourlyWeatherContract.Columns.ID,
+        entityColumn = WeatherContract.Columns.PARENT_ID
     )
     val weatherList: List<WeatherEntity>,
 ) : Parcelable

@@ -30,16 +30,16 @@ data class Weather(
 )
 data class WeatherEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = WeatherContract.columns.KEY)
+    @ColumnInfo(name = WeatherContract.Columns.KEY)
     val key: Long,
-    @ColumnInfo(name = WeatherContract.columns.ID)
+    @ColumnInfo(name = WeatherContract.Columns.ID)
     val id: Int,
-    @ColumnInfo(name = WeatherContract.columns.MAIN)
+    @ColumnInfo(name = WeatherContract.Columns.MAIN)
     val main: String,
-    @ColumnInfo(name = WeatherContract.columns.DESCRIPTION)
+    @ColumnInfo(name = WeatherContract.Columns.DESCRIPTION)
     val description: String,
-    @ColumnInfo(name = WeatherContract.columns.ICON)
+    @ColumnInfo(name = WeatherContract.Columns.ICON)
     val icon: String,
-    @ColumnInfo(name = WeatherContract.columns.PARENT_ID)
+    @ColumnInfo(name = WeatherContract.Columns.PARENT_ID)
     var parent_id: String?
 ) : Parcelable

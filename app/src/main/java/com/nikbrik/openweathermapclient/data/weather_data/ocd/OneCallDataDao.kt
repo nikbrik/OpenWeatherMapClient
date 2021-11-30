@@ -13,15 +13,15 @@ interface OneCallDataDao {
     suspend fun insertOneCallData(oneCallData: OneCallDataEntity)
 
     @Transaction
-    @Query("SELECT * FROM ${OneCallDataContract.TABLE_NAME} ORDER BY ${OneCallDataContract.columns.ID}")
+    @Query("SELECT * FROM ${OneCallDataContract.TABLE_NAME} ORDER BY ${OneCallDataContract.Columns.ID}")
     suspend fun getAllOcd(): List<OneCallDataWithLists>
 
-    @Query("SELECT MAX(${OneCallDataContract.columns.ID}) FROM ${OneCallDataContract.TABLE_NAME}")
+    @Query("SELECT MAX(${OneCallDataContract.Columns.ID}) FROM ${OneCallDataContract.TABLE_NAME}")
     suspend fun getLastOcdId(): Long?
 
     @Delete(entity = OneCallDataEntity::class)
     suspend fun delete(ocdEntity: OneCallDataEntity)
 
-    @Query("DELETE FROM ${OneCallDataContract.TABLE_NAME} WHERE ${OneCallDataContract.columns.ID} = :id")
+    @Query("DELETE FROM ${OneCallDataContract.TABLE_NAME} WHERE ${OneCallDataContract.Columns.ID} = :id")
     suspend fun deleteById(id: Long)
 }

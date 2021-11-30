@@ -2,7 +2,7 @@ package com.nikbrik.openweathermapclient.data.weather_data.daily_weather
 
 object DailyWeatherContract {
     const val TABLE_NAME = "daily_weathers"
-    object columns {
+    object Columns {
         const val ID = "id"
         const val DT = "dt"
         const val TEMP = "temp"

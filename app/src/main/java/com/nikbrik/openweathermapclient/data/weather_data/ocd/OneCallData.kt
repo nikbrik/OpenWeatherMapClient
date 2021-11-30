@@ -34,22 +34,22 @@ data class OneCallData(
 @Entity(
     tableName = OneCallDataContract.TABLE_NAME,
     primaryKeys = [
-        OneCallDataContract.columns.LATITUDE,
-        OneCallDataContract.columns.LONGITUDE,
+        OneCallDataContract.Columns.LATITUDE,
+        OneCallDataContract.Columns.LONGITUDE,
     ],
 )
 data class OneCallDataEntity(
-    @ColumnInfo(name = OneCallDataContract.columns.LATITUDE)
+    @ColumnInfo(name = OneCallDataContract.Columns.LATITUDE)
     val lat: Double,
-    @ColumnInfo(name = OneCallDataContract.columns.LONGITUDE)
+    @ColumnInfo(name = OneCallDataContract.Columns.LONGITUDE)
     val lon: Double,
-    @ColumnInfo(name = OneCallDataContract.columns.TIMEZONE)
+    @ColumnInfo(name = OneCallDataContract.Columns.TIMEZONE)
     val timezone: String,
-    @ColumnInfo(name = OneCallDataContract.columns.TIMEZONE_OFFSET)
+    @ColumnInfo(name = OneCallDataContract.Columns.TIMEZONE_OFFSET)
     val timezone_offset: Int,
-    @ColumnInfo(name = OneCallDataContract.columns.NAME)
+    @ColumnInfo(name = OneCallDataContract.Columns.NAME)
     var name: String = "",
-    @ColumnInfo(name = OneCallDataContract.columns.ID)
+    @ColumnInfo(name = OneCallDataContract.Columns.ID)
     var id: Long = 0L,
 ) : Parcelable
 
@@ -60,22 +60,22 @@ data class OneCallDataWithLists(
 
     @Relation(
         entity = HourlyWeatherEntity::class,
-        parentColumn = OneCallDataContract.columns.ID,
-        entityColumn = HourlyWeatherContract.columns.OCD_ID,
+        parentColumn = OneCallDataContract.Columns.ID,
+        entityColumn = HourlyWeatherContract.Columns.OCD_ID,
     )
     val current: List<HourlyWeatherWithLists>,
 
     @Relation(
         entity = HourlyWeatherEntity::class,
-        parentColumn = OneCallDataContract.columns.ID,
-        entityColumn = HourlyWeatherContract.columns.OCD_ID,
+        parentColumn = OneCallDataContract.Columns.ID,
+        entityColumn = HourlyWeatherContract.Columns.OCD_ID,
     )
     val hourly: List<HourlyWeatherWithLists>,
 
     @Relation(
         entity = DailyWeatherEntity::class,
-        parentColumn = OneCallDataContract.columns.ID,
-        entityColumn = DailyWeatherContract.columns.OCD_ID,
+        parentColumn = OneCallDataContract.Columns.ID,
+        entityColumn = DailyWeatherContract.Columns.OCD_ID,
     )
     val daily: List<DailyWeatherWithLists>,
 ) : Parcelable

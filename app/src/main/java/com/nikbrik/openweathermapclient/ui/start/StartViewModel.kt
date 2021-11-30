@@ -7,12 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.nikbrik.openweathermapclient.data.Repository
 import com.nikbrik.openweathermapclient.data.geocoder.Geo
 import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataWithLists
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StartViewModel : ViewModel() {
-    private val repository = Repository()
+@HiltViewModel
+class StartViewModel @Inject constructor(
+    private val repository: Repository,
+) : ViewModel() {
     private val ocdLiveData = MutableLiveData<List<OneCallDataWithLists>>()
     val ocdList: LiveData<List<OneCallDataWithLists>>
         get() = ocdLiveData

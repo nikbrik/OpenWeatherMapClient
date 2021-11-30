@@ -6,12 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikbrik.openweathermapclient.data.Repository
 import com.nikbrik.openweathermapclient.data.geocoder.Location
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GeocoderViewModel : ViewModel() {
-    private val repository = Repository()
+@HiltViewModel
+class GeocoderViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
     private val locationLiveData = MutableLiveData<List<Location>>()
     val locations: LiveData<List<Location>>
         get() = locationLiveData

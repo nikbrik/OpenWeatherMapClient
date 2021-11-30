@@ -2,7 +2,7 @@ package com.nikbrik.openweathermapclient.data.weather_data.hourly_weather
 
 object HourlyWeatherContract {
     const val TABLE_NAME = "hourly_weather"
-    object columns {
+    object Columns {
         const val ID = "id"
         const val DT = "dt"
         const val TEMP = "temp"

@@ -26,7 +26,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.nikbrik.openweathermapclient.R
-import com.nikbrik.openweathermapclient.app.toast
 import com.nikbrik.openweathermapclient.databinding.FragmentStartScreenBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
 import timber.log.Timber
@@ -41,7 +40,7 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
     // Получение текущего местоположения
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
+    private var locationCallback: LocationCallback by autoCleared()
 
     // Контракт для запроса разрешений
     private val requestMultiplePermissions =
@@ -66,13 +65,11 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         }
 
-        if (this::locationCallback.isInitialized.not()) {
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult?) {
-                    locationResult ?: return
-                    locationResult.lastLocation.apply {
-                        refreshData(latitude, longitude)
-                    }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                locationResult.lastLocation.apply {
+                    refreshData(latitude, longitude)
                 }
             }
         }
@@ -84,6 +81,14 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
                 maxWaitTime = TimeUnit.MINUTES.toMillis(20)
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
+        }
+
+        ocdAdapter = StartAdapter { position ->
+            findNavController().navigate(
+                StartFragmentDirections.actionStartFragmentToDetailFragment(
+                    ocdAdapter.items[position]
+                )
+            )
         }
     }
 
@@ -195,14 +200,14 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
                     requestLocationPermission()
                 }
                 .setNegativeButton(getString(R.string.rationale_dialog_cancel)) { _, _ ->
-                    needLocationPermissionToast()
+//                    needLocationPermissionToast()
                 }
                 .show()
         else
             requestLocationPermission()
     }
 
-    private fun needLocationPermissionToast() = toast(getString(R.string.need_permissions))
+//    private fun needLocationPermissionToast() = toast(getString(R.string.need_permissions))
 
     private fun doIfGoogleApiAvailable(action: () -> Unit) {
         GoogleApiAvailability.getInstance()
@@ -283,13 +288,6 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
     }
 
     private fun initList() {
-        ocdAdapter = StartAdapter { position ->
-            findNavController().navigate(
-                StartFragmentDirections.actionStartFragmentToDetailFragment(
-                    ocdAdapter.items[position]
-                )
-            )
-        }
         binding?.recyclerView?.apply {
             adapter = ocdAdapter
             layoutManager = LinearLayoutManager(requireContext())

@@ -1,28 +1,66 @@
 package com.nikbrik.openweathermapclient.data
 
 import com.nikbrik.openweathermapclient.data.geocoder.Location
-import com.nikbrik.openweathermapclient.data.weather_data.Database
+import com.nikbrik.openweathermapclient.data.weather_data.daily_temp.DailyTempDao
 import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeather
+import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeatherDao
 import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeather
+import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeatherDao
 import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallData
+import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataDao
 import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataEntity
 import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataWithLists
-import com.nikbrik.openweathermapclient.network.Networking
+import com.nikbrik.openweathermapclient.data.weather_data.weather.WeatherDao
+import com.nikbrik.openweathermapclient.network.RemoteApi
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 
-class Repository {
+interface Repository {
+    suspend fun addNew(value: String, lat: Double, lon: Double)
 
-    private val ocdDao
-        get() = Database.instance.ocdDao()
-    private val hourlyWeatherDao
-        get() = Database.instance.hourlyWeatherDao()
-    private val dailyWeatherDao
-        get() = Database.instance.dailyWeatherDao()
-    private val dailyTempDao
-        get() = Database.instance.dailyTempDao()
-    private val weatherDao
-        get() = Database.instance.weatherDao()
+    suspend fun getCashedData(): List<OneCallDataWithLists>
 
-    suspend fun addNew(value: String, lat: Double, lon: Double) {
+    suspend fun getData(lat: Double, lon: Double): List<OneCallDataWithLists>
+
+    suspend fun saveOcdToDB(
+        ocdEntity: OneCallDataEntity,
+        hourly: List<HourlyWeather>,
+        daily: List<DailyWeather>,
+    )
+
+    suspend fun saveHourlyWeatherDataFromOcd(
+        ocdEntity: OneCallDataEntity,
+        hourly: List<HourlyWeather>,
+    )
+
+    suspend fun saveDailyWeatherDataFromOcd(
+        ocdEntity: OneCallDataEntity,
+        daily: List<DailyWeather>,
+    )
+
+    suspend fun oneCallDataFromApi(
+        lat: Double,
+        lon: Double,
+    ): OneCallData
+
+    suspend fun getAddressByCoordinates(lon: Double, lat: Double): String
+
+    suspend fun getLocationsByAddress(address: String): List<Location>
+}
+
+class RepositoryImpl @Inject constructor(
+    private val ocdDao: OneCallDataDao,
+    private val hourlyWeatherDao: HourlyWeatherDao,
+    private val dailyWeatherDao: DailyWeatherDao,
+    private val dailyTempDao: DailyTempDao,
+    private val weatherDao: WeatherDao,
+    private val remoteApi: RemoteApi,
+) : Repository {
+
+    override suspend fun addNew(value: String, lat: Double, lon: Double) {
         val newOcd = oneCallDataFromApi(lat, lon)
         saveOcdToDB(
             newOcd.entity.apply {
@@ -34,11 +72,11 @@ class Repository {
         )
     }
 
-    suspend fun getCashedData(): List<OneCallDataWithLists> {
-        return Database.instance.ocdDao().getAllOcd()
+    override suspend fun getCashedData(): List<OneCallDataWithLists> {
+        return ocdDao.getAllOcd()
     }
 
-    suspend fun getData(lat: Double, lon: Double): List<OneCallDataWithLists> {
+    override suspend fun getData(lat: Double, lon: Double): List<OneCallDataWithLists> {
 
         // Повторный запрос к АПИ
         val currentOcd = oneCallDataFromApi(lat, lon)
@@ -99,7 +137,7 @@ class Repository {
         return getCashedData()
     }
 
-    private suspend fun saveOcdToDB(
+    override suspend fun saveOcdToDB(
         ocdEntity: OneCallDataEntity,
         hourly: List<HourlyWeather>,
         daily: List<DailyWeather>,
@@ -109,7 +147,7 @@ class Repository {
         saveDailyWeatherDataFromOcd(ocdEntity, daily)
     }
 
-    private suspend fun saveHourlyWeatherDataFromOcd(
+    override suspend fun saveHourlyWeatherDataFromOcd(
         ocdEntity: OneCallDataEntity,
         hourly: List<HourlyWeather>,
     ) {
@@ -132,7 +170,7 @@ class Repository {
         )
     }
 
-    private suspend fun saveDailyWeatherDataFromOcd(
+    override suspend fun saveDailyWeatherDataFromOcd(
         ocdEntity: OneCallDataEntity,
         daily: List<DailyWeather>,
     ) {
@@ -167,12 +205,11 @@ class Repository {
         )
     }
 
-    private suspend fun oneCallDataFromApi(
+    override suspend fun oneCallDataFromApi(
         lat: Double,
         lon: Double,
     ): OneCallData {
-        return Networking.openWeatherApi.oneCallRequest(
-            appid = Networking.openWeatherApiKey,
+        return remoteApi.oneCallRequest(
             lat = lat,
             lon = lon,
             exclude = "minutely",
@@ -181,12 +218,20 @@ class Repository {
         )
     }
 
-    private suspend fun getAddressByCoordinates(lon: Double, lat: Double): String {
-        val locations = Networking.geotreeApi.getAddressByCoordinates(lon, lat)
+    override suspend fun getAddressByCoordinates(lon: Double, lat: Double): String {
+        val locations = remoteApi.getAddressByCoordinates(lon, lat)
         return locations.firstOrNull()?.value ?: ""
     }
 
-    suspend fun getLocationsByAddress(address: String): List<Location> {
-        return Networking.geotreeApi.getLocationsByAddress(address)
+    override suspend fun getLocationsByAddress(address: String): List<Location> {
+        return remoteApi.getLocationsByAddress(address)
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
+    abstract fun bindRepository(repositoryImpl: RepositoryImpl): Repository
 }
