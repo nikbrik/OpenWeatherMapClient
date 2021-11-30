@@ -2,8 +2,6 @@ package com.nikbrik.openweathermapclient.network
 
 import com.nikbrik.openweathermapclient.data.geocoder.Location
 import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallData
-import com.nikbrik.openweathermapclient.network.RemoteModule.Companion.GEOTREE_URL
-import com.nikbrik.openweathermapclient.network.RemoteModule.Companion.OPEN_WEATHER_API_KEY
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,16 +29,21 @@ interface RemoteApi {
 
     @GET
     suspend fun getAddressByCoordinates(
+        @Url url: String = GEOTREE_URL,
         @Query("lon") longitude: Double,
         @Query("lat") latitude: Double,
-        @Url url: String = GEOTREE_URL,
     ): List<Location>
 
     @GET
     suspend fun getLocationsByAddress(
-        @Query("term") address: String,
         @Url url: String = GEOTREE_URL,
+        @Query("term") address: String,
     ): List<Location>
+
+    companion object {
+        private const val OPEN_WEATHER_API_KEY = "e6dd82be071efbb0acabc0854d9461f4"
+        private const val GEOTREE_URL = "https://api.geotree.ru/address.php"
+    }
 }
 
 @Module
@@ -60,8 +63,8 @@ class RemoteModule {
         okHttpClient: OkHttpClient,
         converterFactory: Converter.Factory,
     ): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
         .addConverterFactory(converterFactory)
+        .baseUrl(BASE_URL)
         .client(okHttpClient)
         .build()
 
@@ -70,7 +73,5 @@ class RemoteModule {
 
     companion object {
         private const val BASE_URL = "https://api.openweathermap.org/"
-        const val GEOTREE_URL = "https://api.geotree.ru/address.php"
-        const val OPEN_WEATHER_API_KEY = "e6dd82be071efbb0acabc0854d9461f4"
     }
 }

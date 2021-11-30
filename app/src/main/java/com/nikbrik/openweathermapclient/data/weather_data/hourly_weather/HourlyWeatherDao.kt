@@ -16,4 +16,7 @@ interface HourlyWeatherDao {
 
     @Query("DELETE FROM ${HourlyWeatherContract.TABLE_NAME}")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM ${HourlyWeatherContract.TABLE_NAME} WHERE parent_id = :parentId")
+    suspend fun delete(parentId: Long)
 }

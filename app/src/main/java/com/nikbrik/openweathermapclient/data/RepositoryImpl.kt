@@ -46,8 +46,6 @@ interface Repository {
         lon: Double,
     ): OneCallData
 
-    suspend fun getAddressByCoordinates(lon: Double, lat: Double): String
-
     suspend fun getLocationsByAddress(address: String): List<Location>
 }
 
@@ -78,10 +76,17 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getData(lat: Double, lon: Double): List<OneCallDataWithLists> {
 
-        // Повторный запрос к АПИ
+        // Получаем данные о погоде с сервера по местоположению и на текущий момент
         val currentOcd = oneCallDataFromApi(lat, lon)
 
+        // Получаем все данные о погоде из базы данных в список
         val allOcd = ocdDao.getAllOcd()
+
+        // TODO Нужно просто взять список координат из базы данных и по каждому из них запросить новые данные о погоде
+        // Или только по конкретному
+        // Так или иначе, тут какой-то кошмар
+
+        // Сохраняем (что? зачем? слишком сложно)
         val allCashedData = allOcd.map { ocdRelations ->
             if (ocdRelations.entity.id == 0L) {
                 null
@@ -104,6 +109,7 @@ class RepositoryImpl @Inject constructor(
 
         // Полностью очистить детализированные таблицы,
         // ocd оставляем, т.к. данные нужны для повторого запроса
+        // Зачем запрашивать заново данные не по текущему местоположению?!
         hourlyWeatherDao.deleteAll()
         dailyWeatherDao.deleteAll()
         dailyTempDao.deleteAll()
@@ -205,6 +211,7 @@ class RepositoryImpl @Inject constructor(
         )
     }
 
+    // Получить все данные о погоде в конкретном месте
     override suspend fun oneCallDataFromApi(
         lat: Double,
         lon: Double,
@@ -218,13 +225,8 @@ class RepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getAddressByCoordinates(lon: Double, lat: Double): String {
-        val locations = remoteApi.getAddressByCoordinates(lon, lat)
-        return locations.firstOrNull()?.value ?: ""
-    }
-
     override suspend fun getLocationsByAddress(address: String): List<Location> {
-        return remoteApi.getLocationsByAddress(address)
+        return remoteApi.getLocationsByAddress(address = address)
     }
 }
 

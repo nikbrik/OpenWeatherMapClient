@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.databinding.FragmentGeocoderBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
+@AndroidEntryPoint
 class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
     private var binding: FragmentGeocoderBinding? = null
     private val viewModel: GeocoderViewModel by viewModels()

@@ -5,9 +5,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -28,9 +26,11 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.databinding.FragmentStartScreenBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 class StartFragment : Fragment(R.layout.fragment_start_screen) {
     private var binding: FragmentStartScreenBinding? = null
     private val viewModel: StartViewModel by viewModels()
@@ -58,9 +58,17 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private fun createAdapter() {
+        ocdAdapter = StartAdapter { position ->
+            findNavController().navigate(
+                StartFragmentDirections.actionStartFragmentToDetailFragment(
+                    ocdAdapter.items[position]
+                )
+            )
+        }
+    }
 
+    private fun initLocationTracking() {
         if (this::fusedLocationClient.isInitialized.not()) {
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         }
@@ -82,31 +90,16 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
         }
-
-        ocdAdapter = StartAdapter { position ->
-            findNavController().navigate(
-                StartFragmentDirections.actionStartFragmentToDetailFragment(
-                    ocdAdapter.items[position]
-                )
-            )
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentStartScreenBinding.inflate(
-            LayoutInflater.from(requireContext()), container, false
-        )
-        return binding!!.root
     }
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding = FragmentStartScreenBinding.bind(view)
+
+        initLocationTracking()
+        createAdapter()
         checkGooglePlayServices()
 
         if (isLocationPermissionGranted()) {
@@ -293,5 +286,9 @@ class StartFragment : Fragment(R.layout.fragment_start_screen) {
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

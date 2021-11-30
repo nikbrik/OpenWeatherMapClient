@@ -10,19 +10,13 @@
         android:name="com.nikbrik.openweathermapclient.ui.detail.DetailFragment"
         android:label="MainScreenFragment"
         tools:layout="@layout/fragment_detail">
-        <action
-            android:id="@+id/action_mainScreenFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+
         <argument
             android:name="oneCallDataWithLists"
             app:argType="com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataWithLists" />
 
     </fragment>
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.nikbrik.openweathermapclient.ui.settings.SettingsFragment"
-        android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings" />
+
     <fragment
         android:id="@+id/startFragment"
         android:name="com.nikbrik.openweathermapclient.ui.start.StartFragment"
@@ -30,10 +24,8 @@
         tools:layout="@layout/fragment_start_screen">
         <action
             android:id="@+id/action_startFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
-        <action
-            android:id="@+id/action_startFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/detailFragment"/>
+
         <action
             android:id="@+id/action_startFragment_to_geocoderFragment"
             app:destination="@id/geocoderFragment" />
