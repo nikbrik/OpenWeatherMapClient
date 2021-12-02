@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.nikbrik.openweathermapclient.DailyTemp
+import com.nikbrik.openweathermapclient.DailyTempEntity
 import com.nikbrik.openweathermapclient.data.weather_data.OpenWeatherDatabase.Companion.DB_VERSION
 import com.nikbrik.openweathermapclient.data.weather_data.daily_temp.DailyTempDao
 import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeatherDao
@@ -27,7 +27,7 @@ import javax.inject.Singleton
         OneCallDataEntity::class,
         HourlyWeatherEntity::class,
         DailyWeatherEntity::class,
-        DailyTemp::class,
+        DailyTempEntity::class,
         WeatherEntity::class,
     ],
     version = DB_VERSION,

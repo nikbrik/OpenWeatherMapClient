@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.app.withArguments
-import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeatherWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeather
 import com.nikbrik.openweathermapclient.databinding.FragmentDailyBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
 
@@ -52,7 +52,7 @@ class DailyFragment : Fragment(R.layout.fragment_daily) {
             val dailyWeatherArray =
                 requireArguments().getParcelableArray(KEY_DAILY_LIST)
             dailyWeatherArray?.apply {
-                val dailyWeatherArray = map { it as DailyWeatherWithLists }
+                val dailyWeatherArray = map { it as DailyWeather }
                 items = dailyWeatherArray
             }
         }
@@ -62,7 +62,7 @@ class DailyFragment : Fragment(R.layout.fragment_daily) {
         private const val KEY_DAILY_LIST = "KEY_DAILY_LIST"
 
         fun newInstance(
-            dailyList: List<DailyWeatherWithLists>
+            dailyList: List<DailyWeather>
         ): DailyFragment {
             return DailyFragment().withArguments {
                 putParcelableArray(KEY_DAILY_LIST, dailyList.toTypedArray())

@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nikbrik.openweathermapclient.R
 import com.nikbrik.openweathermapclient.app.withArguments
-import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeatherWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeather
 import com.nikbrik.openweathermapclient.databinding.FragmentHourlyBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
 
@@ -51,7 +51,7 @@ class HourlyFragment : Fragment(R.layout.fragment_hourly) {
         hourlyAdapter.apply {
             val hourlyWeatherArray = requireArguments().getParcelableArray(KEY_HOURLY_LIST)
             hourlyWeatherArray?.apply {
-                val hourlyWeatherList = map { it as HourlyWeatherWithLists }
+                val hourlyWeatherList = map { it as HourlyWeather }
                 items = hourlyWeatherList
             }
         }
@@ -61,7 +61,7 @@ class HourlyFragment : Fragment(R.layout.fragment_hourly) {
         private const val KEY_HOURLY_LIST = "KEY_HOURLY_LIST"
 
         fun newInstance(
-            hourlyList: List<HourlyWeatherWithLists>
+            hourlyList: List<HourlyWeather>
         ): HourlyFragment {
             return HourlyFragment().withArguments {
                 putParcelableArray(KEY_HOURLY_LIST, hourlyList.toTypedArray())

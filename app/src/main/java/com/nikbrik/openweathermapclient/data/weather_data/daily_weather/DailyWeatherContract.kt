@@ -5,10 +5,11 @@ object DailyWeatherContract {
     object Columns {
         const val ID = "id"
         const val DT = "dt"
-        const val TEMP = "temp"
-        const val FEELS_TEMP = "feels_like"
+        const val TEMP_ID = "temp_id"
+        const val FEELS_ID = "feels_id"
         const val CLOUDS = "clouds"
         const val WIND_SPEED = "wind_speed"
         const val OCD_ID = "ocd_id"
+        const val WEATHER_ID = "weather_id"
     }
 }

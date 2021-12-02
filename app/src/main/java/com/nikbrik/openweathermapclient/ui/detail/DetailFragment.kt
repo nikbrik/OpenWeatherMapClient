@@ -42,8 +42,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private fun addListeners() {
         // Инициализация вьюпейджера
         binding?.viewPager?.adapter = DetailViewPagerAdapter(
-            args.oneCallDataWithLists.hourly,
-            args.oneCallDataWithLists.daily,
+            args.oneCallData.hourly,
+            args.oneCallData.daily,
             fragment = this
         )
 

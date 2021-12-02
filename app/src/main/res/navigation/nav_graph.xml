@@ -12,8 +12,8 @@
         tools:layout="@layout/fragment_detail">
 
         <argument
-            android:name="oneCallDataWithLists"
-            app:argType="com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataWithLists" />
+            android:name="oneCallData"
+            app:argType="com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallData" />
 
     </fragment>
 

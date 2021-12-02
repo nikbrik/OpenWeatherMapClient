@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikbrik.openweathermapclient.data.Repository
 import com.nikbrik.openweathermapclient.data.geocoder.Geo
-import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +17,8 @@ import javax.inject.Inject
 class StartViewModel @Inject constructor(
     private val repository: Repository,
 ) : ViewModel() {
-    private val ocdLiveData = MutableLiveData<List<OneCallDataWithLists>>()
-    val ocdList: LiveData<List<OneCallDataWithLists>>
+    private val ocdLiveData = MutableLiveData<List<OneCallData>>()
+    val ocdList: LiveData<List<OneCallData>>
         get() = ocdLiveData
     private val errorLiveData = MutableLiveData<Throwable>()
     val error: LiveData<Throwable>
@@ -39,13 +39,13 @@ class StartViewModel @Inject constructor(
     fun getStartData() {
         viewModelScope.launch(Dispatchers.Default + errorHandler) {
             ocdLiveData.postValue(repository.getCashedData())
-            ocdLiveData.postValue(repository.getData(lat, lon))
+            ocdLiveData.postValue(repository.getAllData(lat, lon))
         }
     }
 
     fun addNew(value: String, geoCoordinates: Geo) {
         viewModelScope.launch(Dispatchers.Default + errorHandler) {
-            repository.addNew(value, geoCoordinates.lat, geoCoordinates.lon)
+            repository.add(value, geoCoordinates.lat, geoCoordinates.lon)
             ocdLiveData.postValue(repository.getCashedData())
         }
     }

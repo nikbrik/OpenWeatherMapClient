@@ -2,14 +2,14 @@ package com.nikbrik.openweathermapclient.ui.detail
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeatherWithLists
-import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeatherWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeather
+import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeather
 import com.nikbrik.openweathermapclient.ui.detail.daily.DailyFragment
 import com.nikbrik.openweathermapclient.ui.detail.hourly.HourlyFragment
 
 class DetailViewPagerAdapter(
-    private val hourlyWeatherList: List<HourlyWeatherWithLists>,
-    private val dailyWeatherList: List<DailyWeatherWithLists>,
+    private val hourlyWeatherList: List<HourlyWeather>,
+    private val dailyWeatherList: List<DailyWeather>,
     fragment: DetailFragment
 ) : FragmentStateAdapter(fragment) {
 

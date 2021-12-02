@@ -9,11 +9,11 @@ import kotlinx.parcelize.Parcelize
 @JsonClass(generateAdapter = true)
 data class Levels(
     @Json(name = "1")
-    val level1: LevelDescription?,
+    val level1: LevelDescription? = null,
     @Json(name = "2")
-    val level2: LevelDescription?,
+    val level2: LevelDescription? = null,
     @Json(name = "3")
-    val level3: LevelDescription?,
+    val level3: LevelDescription? = null,
     @Json(name = "4")
-    val level4: LevelDescription?,
+    val level4: LevelDescription? = null,
 ) : Parcelable

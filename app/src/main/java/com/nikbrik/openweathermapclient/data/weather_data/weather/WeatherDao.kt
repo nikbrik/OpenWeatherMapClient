@@ -7,11 +7,11 @@ import androidx.room.Query
 
 @Dao
 interface WeatherDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertList(list: List<WeatherEntity>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(set: Set<WeatherEntity>)
 
     @Query("SELECT * FROM ${WeatherContract.TABLE_NAME}")
-    suspend fun getAll(): List<WeatherEntity>
+    suspend fun selectAll(): List<WeatherEntity>
 
     @Query("DELETE FROM ${WeatherContract.TABLE_NAME}")
     suspend fun deleteAll()

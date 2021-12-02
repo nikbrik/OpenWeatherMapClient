@@ -10,6 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nikbrik.openweathermapclient.R
+import com.nikbrik.openweathermapclient.data.geocoder.Geo
+import com.nikbrik.openweathermapclient.data.geocoder.Levels
+import com.nikbrik.openweathermapclient.data.geocoder.Location
 import com.nikbrik.openweathermapclient.databinding.FragmentGeocoderBinding
 import com.nikbrik.openweathermapclient.extensions.autoCleared
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,6 +89,7 @@ class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
     }
 
     private fun initList() {
+
         geocoderAdapter = GeocoderListAdapter { position ->
             findNavController().navigate(
                 GeocoderFragmentDirections.actionGeocoderFragmentToStartFragment(
@@ -93,6 +97,28 @@ class GeocoderFragment : Fragment(R.layout.fragment_geocoder) {
                 ),
             )
         }
+
+        geocoderAdapter.items = listOf(
+            Location(
+                value = "Location 1",
+                type = "Type 1",
+                description = "",
+                geo_inside = Geo(40.0, 40.0),
+                levels = Levels(),
+                address = null,
+                geo_center = null,
+            ),
+            Location(
+                value = "Location 2",
+                type = "Type 2",
+                description = "",
+                geo_inside = Geo(100.0, 10.0),
+                levels = Levels(),
+                address = null,
+                geo_center = null,
+            ),
+        )
+
         binding?.recyclerView?.apply {
             adapter = geocoderAdapter
             layoutManager = LinearLayoutManager(requireContext())

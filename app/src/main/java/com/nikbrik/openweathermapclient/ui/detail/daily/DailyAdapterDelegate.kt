@@ -3,15 +3,15 @@ package com.nikbrik.openweathermapclient.ui.detail.daily
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeatherWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.daily_weather.DailyWeather
 import com.nikbrik.openweathermapclient.databinding.ItemDailyBinding
 
 class DailyAdapterDelegate() :
-    AbsListItemAdapterDelegate<DailyWeatherWithLists, DailyWeatherWithLists, DailyViewHolder>() {
+    AbsListItemAdapterDelegate<DailyWeather, DailyWeather, DailyViewHolder>() {
 
     override fun isForViewType(
-        item: DailyWeatherWithLists,
-        items: MutableList<DailyWeatherWithLists>,
+        item: DailyWeather,
+        items: MutableList<DailyWeather>,
         position: Int
     ): Boolean {
         return true
@@ -28,7 +28,7 @@ class DailyAdapterDelegate() :
     }
 
     override fun onBindViewHolder(
-        item: DailyWeatherWithLists,
+        item: DailyWeather,
         holder: DailyViewHolder,
         payloads: MutableList<Any>
     ) {

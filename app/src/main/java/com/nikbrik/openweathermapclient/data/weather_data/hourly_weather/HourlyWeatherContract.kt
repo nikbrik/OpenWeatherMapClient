@@ -10,5 +10,7 @@ object HourlyWeatherContract {
         const val CLOUDS = "clouds"
         const val WIND_SPEED = "wind_speed"
         const val OCD_ID = "parent_id"
+        const val WEATHER_ID = "weather_id"
+        const val CURRENT = "current"
     }
 }

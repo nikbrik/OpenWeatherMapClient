@@ -3,15 +3,15 @@ package com.nikbrik.openweathermapclient.ui.detail.hourly
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeatherWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeather
 import com.nikbrik.openweathermapclient.databinding.ItemHourlyBinding
 
 class HourlyAdapterDelegate() :
-    AbsListItemAdapterDelegate<HourlyWeatherWithLists, HourlyWeatherWithLists, HourlyViewHolder>() {
+    AbsListItemAdapterDelegate<HourlyWeather, HourlyWeather, HourlyViewHolder>() {
 
     override fun isForViewType(
-        item: HourlyWeatherWithLists,
-        items: MutableList<HourlyWeatherWithLists>,
+        item: HourlyWeather,
+        items: MutableList<HourlyWeather>,
         position: Int
     ): Boolean {
         return true
@@ -28,7 +28,7 @@ class HourlyAdapterDelegate() :
     }
 
     override fun onBindViewHolder(
-        item: HourlyWeatherWithLists,
+        item: HourlyWeather,
         holder: HourlyViewHolder,
         payloads: MutableList<Any>
     ) {

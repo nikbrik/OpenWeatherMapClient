@@ -1,7 +1,7 @@
 package com.nikbrik.openweathermapclient.network
 
 import com.nikbrik.openweathermapclient.data.geocoder.Location
-import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallData
+import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataJson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +25,7 @@ interface RemoteApi {
         @Query("exclude") exclude: String,
         @Query("lang") lang: String,
         @Query("units") units: String,
-    ): OneCallData
+    ): OneCallDataJson
 
     @GET
     suspend fun getAddressByCoordinates(

@@ -9,5 +9,6 @@ object OneCallDataContract {
         const val TIMEZONE = "timezone"
         const val TIMEZONE_OFFSET = "timezone_offset"
         const val NAME = "name"
+        const val CURRENT_DT = "current_dt"
     }
 }

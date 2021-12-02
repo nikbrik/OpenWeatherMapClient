@@ -5,23 +5,22 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
+import com.nikbrik.openweathermapclient.data.weather_data.ocd.OneCallDataEntity.Companion.CURRENT_NAME
 
 @Dao
 interface OneCallDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOneCallData(oneCallData: OneCallDataEntity)
+    suspend fun insert(oneCallData: OneCallDataEntity)
 
-    @Transaction
-    @Query("SELECT * FROM ${OneCallDataContract.TABLE_NAME} ORDER BY ${OneCallDataContract.Columns.ID}")
-    suspend fun getAllOcd(): List<OneCallDataWithLists>
+    @Query("SELECT * FROM ${OneCallDataContract.TABLE_NAME}")
+    suspend fun selectAllEntities(): List<OneCallDataEntity>
 
-    @Query("SELECT MAX(${OneCallDataContract.Columns.ID}) FROM ${OneCallDataContract.TABLE_NAME}")
-    suspend fun getLastOcdId(): Long?
+    @Query("SELECT ${OneCallDataContract.Columns.NAME}, ${OneCallDataContract.Columns.LATITUDE}, ${OneCallDataContract.Columns.LONGITUDE} FROM ${OneCallDataContract.TABLE_NAME} WHERE ${OneCallDataContract.Columns.NAME} != '$CURRENT_NAME'")
+    suspend fun selectLocationInfo(): List<LocationInfo>
 
-    @Delete(entity = OneCallDataEntity::class)
+    @Query("DELETE FROM ${OneCallDataContract.TABLE_NAME}")
+    suspend fun deleteAll()
+
+    @Delete
     suspend fun delete(ocdEntity: OneCallDataEntity)
-
-    @Query("DELETE FROM ${OneCallDataContract.TABLE_NAME} WHERE ${OneCallDataContract.Columns.ID} = :id")
-    suspend fun deleteById(id: Long)
 }

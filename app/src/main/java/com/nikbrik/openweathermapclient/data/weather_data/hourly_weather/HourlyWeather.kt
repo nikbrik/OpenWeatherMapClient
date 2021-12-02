@@ -1,60 +1,51 @@
 package com.nikbrik.openweathermapclient.data.weather_data.hourly_weather
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Relation
 import com.nikbrik.openweathermapclient.data.weather_data.weather.Weather
-import com.nikbrik.openweathermapclient.data.weather_data.weather.WeatherContract
 import com.nikbrik.openweathermapclient.data.weather_data.weather.WeatherEntity
-import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 
-@JsonClass(generateAdapter = true)
+@Parcelize
 data class HourlyWeather(
     val dt: Long,
     val temp: Float,
     val feels_like: Float,
     val clouds: Int,
     val wind_speed: Float,
-    var weather: List<Weather>
-) {
-    fun entityWithParentId(id: Long) =
-        HourlyWeatherEntity(id.toString() + dt.toString(), dt, temp, feels_like, clouds, wind_speed, id)
+    val weather: Weather,
+) : Parcelable {
+    companion object {
+        fun fromJson(json: HourlyWeatherJson): HourlyWeather {
+            val weather = json.weather.firstOrNull()
+            val weatherTitle = weather?.main ?: ""
+            val weatherDescription = weather?.description ?: ""
+            val weatherIcon = weather?.icon ?: ""
+            return HourlyWeather(
+                json.dt,
+                json.temp,
+                json.feels_like,
+                json.clouds,
+                json.wind_speed,
+                Weather(weatherTitle, weatherDescription, weatherIcon),
+            )
+        }
+
+        fun fromEntities(
+            entity: HourlyWeatherEntity,
+            weatherList: List<WeatherEntity>
+        ): HourlyWeather {
+            val weather = weatherList.firstOrNull()
+            val weatherTitle = weather?.main ?: ""
+            val weatherDescription = weather?.description ?: ""
+            val weatherIcon = weather?.icon ?: ""
+            return HourlyWeather(
+                entity.dt,
+                entity.temp,
+                entity.feelsLike,
+                entity.clouds,
+                entity.windSpeed,
+                Weather(weatherTitle, weatherDescription, weatherIcon),
+            )
+        }
+    }
 }
-
-@Parcelize
-@Entity(
-    tableName = HourlyWeatherContract.TABLE_NAME,
-    primaryKeys = [
-        HourlyWeatherContract.Columns.ID,
-    ],
-)
-data class HourlyWeatherEntity(
-    @ColumnInfo(name = HourlyWeatherContract.Columns.ID)
-    val id: String,
-    @ColumnInfo(name = HourlyWeatherContract.Columns.DT)
-    val dt: Long,
-    @ColumnInfo(name = HourlyWeatherContract.Columns.TEMP)
-    val temp: Float,
-    @ColumnInfo(name = HourlyWeatherContract.Columns.FEELS)
-    val feels_like: Float,
-    @ColumnInfo(name = HourlyWeatherContract.Columns.CLOUDS)
-    val clouds: Int,
-    @ColumnInfo(name = HourlyWeatherContract.Columns.WIND_SPEED)
-    val wind_speed: Float,
-    @ColumnInfo(name = HourlyWeatherContract.Columns.OCD_ID)
-    val parent_id: Long,
-) : Parcelable
-
-@Parcelize
-data class HourlyWeatherWithLists(
-    @Embedded
-    val entity: HourlyWeatherEntity,
-    @Relation(
-        parentColumn = HourlyWeatherContract.Columns.ID,
-        entityColumn = WeatherContract.Columns.PARENT_ID
-    )
-    val weatherList: List<WeatherEntity>,
-) : Parcelable

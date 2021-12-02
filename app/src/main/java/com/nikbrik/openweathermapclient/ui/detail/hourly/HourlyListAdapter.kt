@@ -2,26 +2,26 @@ package com.nikbrik.openweathermapclient.ui.detail.hourly
 
 import androidx.recyclerview.widget.DiffUtil
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
-import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeatherWithLists
+import com.nikbrik.openweathermapclient.data.weather_data.hourly_weather.HourlyWeather
 
 class HourlyListAdapter() :
-    AsyncListDifferDelegationAdapter<HourlyWeatherWithLists>(HourlyDiffUtilCallback()) {
+    AsyncListDifferDelegationAdapter<HourlyWeather>(HourlyDiffUtilCallback()) {
 
     init {
         delegatesManager.addDelegate(HourlyAdapterDelegate())
     }
 
-    class HourlyDiffUtilCallback : DiffUtil.ItemCallback<HourlyWeatherWithLists>() {
+    class HourlyDiffUtilCallback : DiffUtil.ItemCallback<HourlyWeather>() {
         override fun areItemsTheSame(
-            oldItem: HourlyWeatherWithLists,
-            newItem: HourlyWeatherWithLists
+            oldItem: HourlyWeather,
+            newItem: HourlyWeather
         ): Boolean {
-            return oldItem.entity.dt == newItem.entity.dt
+            return oldItem.dt == newItem.dt
         }
 
         override fun areContentsTheSame(
-            oldItem: HourlyWeatherWithLists,
-            newItem: HourlyWeatherWithLists
+            oldItem: HourlyWeather,
+            newItem: HourlyWeather
         ): Boolean {
             return oldItem == newItem
         }

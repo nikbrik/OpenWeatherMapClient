@@ -8,10 +8,10 @@ import androidx.room.Query
 @Dao
 interface DailyWeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertList(list: List<DailyWeatherEntity>)
+    suspend fun insert(list: List<DailyWeatherEntity>)
 
     @Query("SELECT * FROM ${DailyWeatherContract.TABLE_NAME}")
-    suspend fun getAll(): List<DailyWeatherEntity>
+    suspend fun selectAll(): List<DailyWeatherEntity>
 
     @Query("DELETE FROM ${DailyWeatherContract.TABLE_NAME}")
     suspend fun deleteAll()
